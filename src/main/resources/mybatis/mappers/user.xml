@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="user">
+
+	<insert id="insert" parameterType="map">
+		<![CDATA[
+			insert into users 
+			values (seq_users_no.nextval, #{name}, #{email}, #{password}, #{gender}) 
+		]]>
+	</insert>
+
+	<select id="selectUserByEmailPW" parameterType="map" resultType="com.javaex.vo.UserVo">
+		<![CDATA[
+			select no, name
+			from users 
+			where email = #{email} and password = #{password}
+		]]>
+	</select>
+	
+	<select id="selectUserByNo" parameterType="int" resultType="com.javaex.vo.UserVo">
+		<![CDATA[
+			select no, name , email, gender
+			from users 
+			where no = #{no}
+		]]>
+	</select>
+	
+	<update id="update" parameterType="map">
+		<![CDATA[
+			update users
+			set name = #{name}, password = #{password}, gender = #{gender}
+			where no = #{no}
+		]]>
+	</update>
+	
+	<select id="selectUserByEmail" parameterType="String" resultType="com.javaex.vo.UserVo">
+		<![CDATA[
+			select no, name, gender, email
+			from users
+			where email = #{email}
+		]]>
+	</select>
+
+</mapper>

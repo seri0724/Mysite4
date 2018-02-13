@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gb">
+
+	<!-- 리스트 -->
+	<select id="list" resultType="com.javaex.vo.GuestbookVo">
+		<![CDATA[
+			select no, name, password, content, reg_date regDate
+			from guestbook
+			order by no asc
+		]]>
+	</select>
+	
+	<!-- 방명록에 글 작성하기 -->
+	<insert id="insert" parameterType="map">
+		<![CDATA[
+			insert into guestbook
+			values (seq_guestbook_no.nextval, #{name}, #{password}, #{content}, sysdate) 
+		]]>
+	</insert>
+	
+	<!-- ajax방명록에 글 작성하기 -->
+	<insert id="apiInsert" parameterType="com.javaex.vo.GuestbookVo"> <!-- 파라미터(매개변수)타입 -->
+		<selectKey keyProperty="no" resultType="int" order="BEFORE">	
+			select seq_guestbook_no.nextval from dual
+		</selectKey>
+		<![CDATA[
+			insert into guestbook
+			values (#{no}, #{name}, #{password}, #{content}, sysdate) 
+		]]>
+	</insert>
+	
+	<select id="selectOneByNo" parameterType="int" resultType="com.javaex.vo.GuestbookVo"> <!-- 리턴타입 -->
+		<![CDATA[
+			select no, name, password, content, reg_date regDate
+			from guestbook
+			where no = #{no}
+		]]>
+	</select>
+	
+	<!-- 방명록에 있는 글 삭제하기 -->
+	<!-- ajax방명록에 있는 글 삭제하기 -->
+	<delete id="delete" parameterType="map">
+		<![CDATA[
+			delete from guestbook 
+			where no = #{no} and password = #{password}
+		]]>
+	</delete>
+	
+	<!-- 페이지 더 보기 -->
+	<select id="selectListByPage" parameterType="int" resultType="com.javaex.vo.GuestbookVo">
+		<![CDATA[
+			select t.r, no, name, password, content, reg_date
+			from (select rownum r, no, name, password, content, reg_date
+		          from (select rownum, no, name, password, content, reg_date
+		              	from guestbook
+		              	order by reg_date desc) o
+		     	 )t
+			where r >= (#{page}-1)*5+1
+			and r <= #{page}*5
+		]]>
+	</select>
+	
+</mapper>
